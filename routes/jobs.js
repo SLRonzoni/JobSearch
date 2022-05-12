@@ -16,14 +16,14 @@ function jobs(app){
         try{   
             //get todos los empleos x ubicacion
             if(req.query.jobLocation){
-                let jobLocationRequired = req.query.jobLocation;//capturar valor enviado en ruta (localhost:4000/api/jobs?jobLocation=jobLocation) 
+                let jobLocationRequired = req.query.jobLocation;
                 const jobs = await jobServ.getAllByLocation(jobLocationRequired);
                 return res.status(200).json(jobs)
             }
 
             //get todos los empleos x nombre del puesto 
             if(req.query.jobOfferedName){
-                let jobOfferedNameRequired = req.query.jobOfferedName;//capturar valor enviado en ruta (localhost:4000/api/jobs?jobOfferedName=jobOfferedName) 
+                let jobOfferedNameRequired = req.query.jobOfferedName;
                 const jobs = await jobServ.getAllByOfferedName(jobOfferedNameRequired);
                 return res.status(200).json(jobs)
             }
@@ -141,10 +141,10 @@ function jobs(app){
         }
     })
 
-    //GET JOBS BY APPLICANT ( solo pueden acceder los postulantes y el administrador)
-    router.get('/jobsByApplicant/:id',verifyToken,verifyRole(roleApplicants),async (req,res)=>{
+    //GET APPLICANTS BY JOB ( solo pueden acceder los publicantes y el administrador)
+    router.get('/applicantByJob/:id',verifyToken,verifyRole(rolePublicants),async (req,res)=>{
         try{
-            const job = await jobServ.getJobsByApplicant(req.params.id);
+            const job = await jobServ.getApplicantsByJob(req.params.id);
             return res.status(200).json(job)
         }
         catch(error){

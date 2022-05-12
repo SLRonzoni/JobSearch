@@ -150,11 +150,10 @@ class Jobs{
     }
 
 
-    //todos los avisos del mismo postulante            /// :::::  FALTA HACER FILTRO DEL POSTULANTE ::::::::::::::
-    async getJobsByApplicant(id){
+    //todos los postulados para el mismo aviso         
+    async getApplicantsByJob(id){
         try{
-            const idObject=mongoose.Types.ObjectId(id) 
-            const jobsByApplicant=await JobModel.aggregate(               
+            const applicantsByJob=await JobModel.aggregate(               
                 [ { $lookup: {
                         from: "applicants",                     
                         localField:"applicantId",                       
@@ -162,10 +161,20 @@ class Jobs{
                         as:"jobApplicant"
                              }
                 },
+                {$unwind:"$applicantId"},
+                {$project:
+                    { id:1,
+                    publicantId:1,
+                    created:1,
+                    jobOffered:1,
+                    categoryId:1,
+                    'applicantId':1             
+                    }
+                }
                 ]  
-             )              
-
-            return(jobsByApplicant)
+             )           
+            
+            return(applicantsByJob)
         }       
         catch(error){
             console.log('ERROR : ', error)
@@ -180,13 +189,13 @@ class Jobs{
     //todos los avisos de la misma categoria
     async getJobsByCategory(id){
         try{
-            const idObject=mongoose.Types.ObjectId(id)        //CONVIERTO EL ID PARAMETRO EN UN OBJECT ID
+            const idObject=mongoose.Types.ObjectId(id)       
             
-            const jobsByCategory=await JobModel.aggregate(    // QUIERO QUE JOBS SE CONECTE CON LA COLECCION...            
+            const jobsByCategory=await JobModel.aggregate(               
                 [{ $lookup: {
-                        from: "categories",                     // ...(nombre de mi esquema : categories), Y BUSCA EN CATEGORIES EL CAMPO ...
-                        localField:"categoryId",                       // ...CATEGORYID
-                        foreignField:"_id",                    // QUE COINCIDA CON EL VALOR DEL CAMPO ID DE JOBS
+                        from: "categories",                     
+                        localField:"categoryId",                       
+                        foreignField:"_id",                    
                         as:"jobCategory"
                             }
                    },
